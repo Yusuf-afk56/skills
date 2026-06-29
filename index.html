@@ -133,17 +133,8 @@
 
     /* ── Hero ── */
     /* ── Floating paths animation ── */
-    @keyframes pathDraw {
-      0%   { stroke-dashoffset: 1000; opacity: .3; }
-      50%  { opacity: .6; }
-      100% { stroke-dashoffset: 0; opacity: .3; }
-    }
     .bg-paths { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
     .bg-paths svg { width: 100%; height: 100%; }
-    .bg-paths path {
-      stroke-dasharray: 1000;
-      animation: pathDraw linear infinite;
-    }
 
     .hero {
       min-height: 100vh;
@@ -443,20 +434,7 @@
     <section class="hero" aria-labelledby="hero-heading">
       <!-- Animated floating paths background -->
       <div class="bg-paths" aria-hidden="true">
-        <svg viewBox="0 0 1200 600" fill="none" preserveAspectRatio="xMidYMid slice">
-          <path d="M-380,-189 C-380,-189 -312,216 152,343 C616,470 684,875 684,875" stroke="rgba(8,145,178,0.12)" stroke-width="1.2" style="animation-duration:28s;animation-delay:0s"/>
-          <path d="M-355,-153 C-355,-153 -288,240 172,367 C636,494 700,895 700,895" stroke="rgba(8,145,178,0.15)" stroke-width="1.3" style="animation-duration:32s;animation-delay:-4s"/>
-          <path d="M-330,-117 C-330,-117 -264,264 192,391 C656,518 720,915 720,915" stroke="rgba(181,151,90,0.10)" stroke-width="1.4" style="animation-duration:25s;animation-delay:-8s"/>
-          <path d="M-305,-81 C-305,-81 -240,288 212,415 C676,542 740,935 740,935" stroke="rgba(8,145,178,0.18)" stroke-width="1.5" style="animation-duration:30s;animation-delay:-2s"/>
-          <path d="M-280,-45 C-280,-45 -216,312 232,439 C696,566 760,955 760,955" stroke="rgba(181,151,90,0.13)" stroke-width="1.6" style="animation-duration:22s;animation-delay:-12s"/>
-          <path d="M-255,-9 C-255,-9 -192,336 252,463 C716,590 780,975 780,975" stroke="rgba(8,145,178,0.20)" stroke-width="1.7" style="animation-duration:35s;animation-delay:-6s"/>
-          <path d="M580,-189 C580,-189 512,216 48,343 C-416,470 -484,875 -484,875" stroke="rgba(8,145,178,0.12)" stroke-width="1.2" style="animation-duration:29s;animation-delay:-3s"/>
-          <path d="M610,-153 C610,-153 542,252 78,379 C-386,506 -454,895 -454,895" stroke="rgba(181,151,90,0.10)" stroke-width="1.3" style="animation-duration:26s;animation-delay:-9s"/>
-          <path d="M640,-117 C640,-117 572,288 108,415 C-356,542 -424,915 -424,915" stroke="rgba(8,145,178,0.16)" stroke-width="1.5" style="animation-duration:33s;animation-delay:-5s"/>
-          <path d="M670,-81 C670,-81 602,324 138,451 C-326,578 -394,935 -394,935" stroke="rgba(181,151,90,0.14)" stroke-width="1.6" style="animation-duration:24s;animation-delay:-15s"/>
-          <path d="M-230,27 C-230,27 -168,360 272,487 C736,614 800,995 800,995" stroke="rgba(8,145,178,0.22)" stroke-width="1.8" style="animation-duration:27s;animation-delay:-1s"/>
-          <path d="M700,-45 C700,-45 632,360 168,487 C-296,614 -364,955 -364,955" stroke="rgba(8,145,178,0.18)" stroke-width="1.7" style="animation-duration:31s;animation-delay:-7s"/>
-        </svg>
+        <svg id="bg-svg" viewBox="0 0 696 316" fill="none" preserveAspectRatio="xMidYMid slice"></svg>
       </div>
       <div class="hero-inner">
         <div class="hero-content">
@@ -975,6 +953,46 @@
         success.style.display = 'block';
       }, 600);
     });
+  </script>
+
+  <script>
+    /* ── Animated background paths (matches BackgroundPaths React component) ── */
+    (function() {
+      const svg = document.getElementById('bg-svg');
+      if (!svg) return;
+      const ns = 'http://www.w3.org/2000/svg';
+      const NUM = 36;
+
+      function makePath(i, position) {
+        const p = document.createElementNS(ns, 'path');
+        const d = `M${-380 - i*5*position} ${-189 + i*6}C${-380 - i*5*position} ${-189 + i*6} ${-312 - i*5*position} ${216 - i*6} ${152 - i*5*position} ${343 - i*6}C${616 - i*5*position} ${470 - i*6} ${684 - i*5*position} ${875 - i*6} ${684 - i*5*position} ${875 - i*6}`;
+        p.setAttribute('d', d);
+        p.setAttribute('stroke', 'rgba(255,255,255,' + (0.04 + i * 0.01) + ')');
+        p.setAttribute('stroke-width', 0.5 + i * 0.03);
+        p.setAttribute('fill', 'none');
+
+        const len = p.getTotalLength ? p.getTotalLength() : 2000;
+        p.style.strokeDasharray = len;
+        p.style.strokeDashoffset = len;
+
+        const dur = 20 + Math.random() * 10;
+        p.animate(
+          [
+            { strokeDashoffset: len, opacity: 0.3 },
+            { strokeDashoffset: len * 0.5, opacity: 0.6 },
+            { strokeDashoffset: 0, opacity: 0.3 },
+            { strokeDashoffset: -len, opacity: 0.3 }
+          ],
+          { duration: dur * 1000, iterations: Infinity, easing: 'linear', delay: -Math.random() * dur * 1000 }
+        );
+        return p;
+      }
+
+      for (let i = 0; i < NUM; i++) {
+        svg.appendChild(makePath(i, 1));
+        svg.appendChild(makePath(i, -1));
+      }
+    })();
   </script>
 </body>
 </html>
