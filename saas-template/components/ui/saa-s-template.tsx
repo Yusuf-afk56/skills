@@ -822,21 +822,11 @@ const Footer = React.memo(() => (
 ));
 Footer.displayName = "Footer";
 
-// ── Main export ───────────────────────────────────────────────────────────────
+// ── Main export (body sections only — nav + hero supplied externally) ─────────
 export default function Component() {
   return (
-    <main className="min-h-screen bg-white text-slate-900 font-sans antialiased">
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-slate-900 focus:rounded-b-md">
-        Skip to main content
-      </a>
-      <Navigation />
+    <div className="bg-white text-slate-900 font-sans antialiased">
       <div id="main-content">
-        <BackgroundPaths
-          title="Dr Schaida Schirwani"
-          subtitle="Consultant Clinical Geneticist"
-          ctaLabel="Book an Appointment"
-          onCtaClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-        />
         <About />
         <Expertise />
         <Services />
@@ -844,6 +834,6 @@ export default function Component() {
         <Contact />
       </div>
       <Footer />
-    </main>
+    </div>
   );
 }
